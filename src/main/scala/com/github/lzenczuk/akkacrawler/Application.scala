@@ -21,7 +21,7 @@ object Application extends App{
 
   println(s"Binding to port $port")
 
-  webServer.run("localhost", port).onComplete{
+  webServer.run("0.0.0.0", port).onComplete{
     case Success(_) =>
       println("Server running")
     case Failure(ex) =>
