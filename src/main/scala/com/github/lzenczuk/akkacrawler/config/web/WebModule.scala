@@ -6,7 +6,7 @@ import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.github.lzenczuk.akkacrawler.web.cluster.ClusterRoute
-import com.github.lzenczuk.akkacrawler.web.wsnotification.WsNotificationsRoute
+import com.github.lzenczuk.akkacrawler.web.notification.NotificationsRoute
 import com.google.inject.{AbstractModule, Provides}
 
 /**
@@ -24,6 +24,6 @@ object WebModule extends AbstractModule {
                       @Named("cluster-status") clusterStatusActor:ActorRef
                     ):Route = {
     ClusterRoute.route(actorSystem, clusterManagerActor) ~
-    WsNotificationsRoute.route(actorSystem, clusterStatusActor)
+    NotificationsRoute.route(actorSystem, clusterStatusActor)
   }
 }

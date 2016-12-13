@@ -5,6 +5,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.github.lzenczuk.akkacrawler.actors.cluster.ClusterManagerActor
+import com.github.lzenczuk.akkacrawler.models.cluster.ClusterModels.ClusterManager._
 import spray.json.DefaultJsonProtocol
 
 /**
@@ -28,7 +29,7 @@ object ClusterRoute extends SprayJsonSupport with DefaultJsonProtocol {
         pathEnd {
           post {
             entity(as[ClusterJoinRequest]) { cjr: ClusterJoinRequest =>
-              nodeManager ! ClusterManagerActor.JoinCluster(cjr.cluster.system, cjr.cluster.host, cjr.cluster.port)
+              nodeManager ! JoinCluster(cjr.cluster.system, cjr.cluster.host, cjr.cluster.port)
               complete(ClusterJoinResponse(success = true, s"Joining cluster: $cjr"))
             }
           }
@@ -37,7 +38,7 @@ object ClusterRoute extends SprayJsonSupport with DefaultJsonProtocol {
         pathPrefix("create") {
           pathEnd {
             post {
-              nodeManager ! ClusterManagerActor.CreateCluster
+              nodeManager ! CreateCluster
               complete(ClusterJoinResponse(success = true, s"Creating cluster"))
             }
           }
@@ -45,7 +46,7 @@ object ClusterRoute extends SprayJsonSupport with DefaultJsonProtocol {
         pathPrefix("leave") {
           pathEnd {
             post {
-              nodeManager ! ClusterManagerActor.LeaveCluster
+              nodeManager ! LeaveCluster
               complete(ClusterJoinResponse(success = true, s"Leaving cluster"))
             }
           }

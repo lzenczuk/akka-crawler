@@ -2,23 +2,16 @@ package com.github.lzenczuk.akkacrawler.actors.notification
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Props}
 import com.github.lzenczuk.akkacrawler.actors.cluster.ClusterStatusActor
-import com.github.lzenczuk.akkacrawler.actors.notification.NotificationActor.{CancelClusterNotification, NotificationListenerTerminated, SetNotificationListener, SubscribeClusterNotification}
-import com.github.lzenczuk.akkacrawler.models.cluster.ClusterEvent
+import com.github.lzenczuk.akkacrawler.models.cluster.ClusterModels.ClusterStatus._
+import com.github.lzenczuk.akkacrawler.models.notification.NotificationModels._
+
 
 /**
   * Created by dev on 13/12/16.
   */
 
 object NotificationActor {
-
   def props(clusterStatusActor: ActorRef) = Props(new NotificationActor(clusterStatusActor))
-
-  case class SetNotificationListener(listenerRef:ActorRef)
-  case object NotificationListenerTerminated
-
-  sealed trait NotificationRequest
-  case object SubscribeClusterNotification extends NotificationRequest
-  case object CancelClusterNotification extends NotificationRequest
 }
 
 class NotificationActor(clusterStatusActor: ActorRef) extends Actor with ActorLogging{
@@ -33,11 +26,11 @@ class NotificationActor(clusterStatusActor: ActorRef) extends Actor with ActorLo
     case SubscribeClusterNotification if state.isClusterNotificationsNotActive =>
       clusterStatusActor ! ClusterStatusActor.Subscribe(self)
       state.activateClusterNotifications()
-    case CancelClusterNotification if state.isClusterNotificationsActive =>
+    case CancelClusterNotificationSubscription if state.isClusterNotificationsActive =>
       clusterStatusActor ! ClusterStatusActor.UnSubscribe
       state.deactivateClusterNotifications()
 
-    case ce:ClusterEvent if state.isClusterNotificationsActive => listener.foreach(_ ! ce)
+    case cse:ClusterStatusEvent if state.isClusterNotificationsActive => listener.foreach(_ ! cse)
   }
 }
 

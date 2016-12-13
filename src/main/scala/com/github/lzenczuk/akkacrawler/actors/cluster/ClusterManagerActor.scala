@@ -1,22 +1,15 @@
 package com.github.lzenczuk.akkacrawler.actors.cluster
 
 import javax.inject.Inject
-
 import akka.actor.{Actor, ActorLogging, Props}
 import akka.cluster.Cluster
-import com.github.lzenczuk.akkacrawler.actors.cluster.ClusterManagerActor.{CreateCluster, JoinCluster, LeaveCluster}
+import com.github.lzenczuk.akkacrawler.models.cluster.ClusterModels.ClusterManager._
 
 /**
   * Created by dev on 08/12/16.
   */
 
 object ClusterManagerActor{
-
-  trait ClusterManagerCommand
-  case object CreateCluster extends ClusterManagerCommand
-  case class JoinCluster(system: String, host:String, port:Int) extends ClusterManagerCommand
-  case object LeaveCluster extends ClusterManagerCommand
-
   def props(cluster:Cluster):Props = Props(new ClusterManagerActor(cluster))
 }
 
