@@ -17,7 +17,9 @@ object Application extends App{
 
   private val webServer: WebServer = injector.instance[WebServer]
 
-  webServer.run("localhost", 9898).onComplete{
+  private val port: Int = Option(System.getProperty("http.port")).map(_.toInt).getOrElse(9898)
+
+  webServer.run("localhost", port).onComplete{
     case Success(_) =>
       println("Server running")
     case Failure(ex) =>
