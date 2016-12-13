@@ -19,6 +19,8 @@ object Application extends App{
 
   private val port: Int = Option(System.getProperty("http.port")).map(_.toInt).getOrElse(9898)
 
+  println(s"Binding to port $port")
+
   webServer.run("localhost", port).onComplete{
     case Success(_) =>
       println("Server running")
