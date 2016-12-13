@@ -27,7 +27,7 @@ class ClusterStatusActor @Inject() (cluster:akka.cluster.Cluster) extends Actor 
   var broadcast = Router(BroadcastRoutingLogic())
 
   override def preStart(): Unit = {
-    cluster.subscribe(self, classOf[MemberEvent], classOf[LeaderChanged])
+    cluster.subscribe(self, initialStateMode = InitialStateAsEvents, classOf[MemberEvent], classOf[LeaderChanged])
   }
 
   def receive = {
