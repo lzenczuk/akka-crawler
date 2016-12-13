@@ -32,7 +32,10 @@ class WebServer @Inject() (implicit actorSystem: ActorSystem, route: Route) {
     }else{
       val hf = Http().bindAndHandle(route, host, port)
       handleFuture = Option(hf)
-      hf.map(_ => Done)
+      hf.map(sb => {
+        println(s"Server bind to: ${sb.localAddress}")
+        Done
+      })
     }
   }
 
