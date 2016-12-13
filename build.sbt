@@ -19,3 +19,9 @@ libraryDependencies ++= Seq(
   // Integration test dependencies
   "org.mock-server" % "mockserver-client" % "3.2"
 )
+
+// Package
+
+enablePlugins(JavaAppPackaging)
+
+mainClass in Compile := Some("com.github.lzenczuk.akkacrawler.Application")
