@@ -13,11 +13,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 object Application extends App{
 
+  final val HttpPortParamName: String = "HTTP_PORT"
+
   val injector = Guice.createInjector(ApplicationModule)
 
   private val webServer: WebServer = injector.instance[WebServer]
 
-  private val port: Int = Option(System.getProperty("http.port")).map(_.toInt).getOrElse(9898)
+  private val port: Int = Option(System.getProperty(HttpPortParamName)).orElse(Option(System.getenv(HttpPortParamName))).map(_.toInt).getOrElse(9898)
 
   println(s"Binding to port $port")
 
