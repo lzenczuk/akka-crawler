@@ -1,6 +1,7 @@
 package com.github.lzenczuk.akkacrawler.web.notification
 
 import akka.actor.{ActorRef, ActorSystem}
+import akka.event.Logging
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
@@ -9,6 +10,7 @@ import akka.stream.scaladsl.{Flow, Sink, Source}
 import com.github.lzenczuk.akkacrawler.actors.notification.NotificationActor
 import com.github.lzenczuk.akkacrawler.models.cluster.ClusterModels.ClusterStatus._
 import com.github.lzenczuk.akkacrawler.models.notification.NotificationModels._
+import com.github.lzenczuk.akkacrawler.web.directives.SessionDirectives._
 import spray.json._
 
 /**
@@ -16,9 +18,9 @@ import spray.json._
   */
 object NotificationsRoute extends NotificationJsonProtocol {
 
-  def notificationsFlow(actorSystem: ActorSystem, clusterStatusActor: ActorRef): Flow[Message, Message, _] = {
+  def notificationsFlow(notificationActorId:String, actorSystem: ActorSystem, clusterStatusActor: ActorRef): Flow[Message, Message, _] = {
 
-    val notificationActor: ActorRef = actorSystem.actorOf(NotificationActor.props(clusterStatusActor))
+    val notificationActor: ActorRef = actorSystem.actorOf(NotificationActor.props(clusterStatusActor), s"notification-actor-${notificationActorId}")
     val notificationActorSink = Sink.actorRef(notificationActor, NotificationListenerTerminated)
     val notificationActorSource = Source.actorRef(1, OverflowStrategy.fail).mapMaterializedValue(listenerRef => notificationActor ! SetNotificationListener(listenerRef))
 
@@ -39,9 +41,12 @@ object NotificationsRoute extends NotificationJsonProtocol {
   }
 
   def route(actorSystem: ActorSystem, clusterStatusActor: ActorRef): Route =
-    pathPrefix("ws") {
-      pathPrefix("notifications") {
-        handleWebSocketMessages(notificationsFlow(actorSystem, clusterStatusActor))
+    session { sessionToken:String =>
+      pathPrefix("ws") {
+        pathPrefix("notifications") {
+          val notificationActorId = s"connection-${System.nanoTime}-session-$sessionToken"
+          handleWebSocketMessages(notificationsFlow(notificationActorId, actorSystem, clusterStatusActor))
+        }
       }
     }
 
