@@ -8,7 +8,7 @@ import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.stream.{ActorMaterializer, OverflowStrategy}
 import com.github.lzenczuk.akkacrawler.actors.httpclient.HttpClientActor.fsm.{Data, State}
 import com.github.lzenczuk.akkacrawler.actors.httpclient.HttpClientActor.{BusyWaitingForResponse, HttpActorException}
-import com.github.lzenczuk.akkacrawler.models.httpclient.HttpClientModels.{CHttpErrorResponse, CHttpRequest, CHttpResponse}
+import com.github.lzenczuk.akkacrawler.models.httpclient.{CHttpErrorResponse, CHttpRequest, CHttpRequestResponse, CHttpResponse}
 
 import scala.util.{Failure, Success, Try}
 
@@ -26,7 +26,7 @@ object HttpClientActor {
 
     sealed trait Data
     case object Empty extends Data
-    case class Recipient(actorRef: ActorRef) extends Data
+    case class Processing(actorRef: ActorRef, req:CHttpRequest) extends Data
   }
 
   case class HttpActorException(message:String) extends RuntimeException(message)
@@ -45,8 +45,8 @@ class HttpClientActor extends  FSM[State, Data] {
 
   override def postStop(): Unit = {
     stateData match {
-      case Recipient(recipient) =>
-        recipient ! Failure(HttpActorException(s"Http actor stopped."))
+      case Processing(recipient, req) => recipient ! CHttpRequestResponse(req, CHttpErrorResponse("Http actor stopped."))
+      case Empty =>
     }
   }
 
@@ -55,30 +55,30 @@ class HttpClientActor extends  FSM[State, Data] {
   when(WaitingForRequest){
     case Event(request:CHttpRequest, Empty) =>
       cReqToReq(request) match {
-        case Left(request) =>
-          httpClientFlowActor ! request
-          goto(WaitingForResponse) using Recipient(sender)
+        case Left(req) =>
+          httpClientFlowActor ! req
+          goto(WaitingForResponse) using Processing(sender, request)
         case Right(response) =>
-          sender ! response
+          sender ! CHttpRequestResponse(request, response)
           stay
       }
   }
 
   when(WaitingForResponse){
-    case Event(Success(response:HttpResponse), Recipient(recipient)) =>
-      recipient ! respToCResp(response)
+    case Event(Success(response:HttpResponse), Processing(recipient, request)) =>
+      recipient ! CHttpRequestResponse(request, respToCResp(response))
       goto(WaitingForRequest) using Empty
 
-    case Event(Failure(ex), Recipient(recipient)) =>
-      recipient ! CHttpErrorResponse(ex.getMessage)
+    case Event(Failure(ex), Processing(recipient, request)) =>
+      recipient ! CHttpRequestResponse(request, CHttpErrorResponse(ex.getMessage))
       goto(WaitingForRequest) using Empty
 
-    case Event(Status.Failure(ex), Recipient(recipient)) =>
-      recipient ! CHttpErrorResponse(ex.getMessage)
+    case Event(Status.Failure(ex), Processing(recipient, request)) =>
+      recipient ! CHttpRequestResponse(request, CHttpErrorResponse(ex.getMessage))
       resetHttpClientFlow()
       goto(WaitingForRequest) using Empty
 
-    case Event(request:CHttpRequest, r:Recipient) =>
+    case Event(request:CHttpRequest, r:Processing) =>
       sender ! BusyWaitingForResponse(request)
       stay()
   }
