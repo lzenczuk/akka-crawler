@@ -1,7 +1,6 @@
 package com.github.lzenczuk.akkacrawler.web.notification
 
 import akka.actor.{ActorRef, ActorSystem}
-import akka.event.Logging
 import akka.http.scaladsl.model.ws.{Message, TextMessage}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route

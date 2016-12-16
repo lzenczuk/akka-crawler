@@ -16,11 +16,11 @@ libraryDependencies ++= Seq(
 
   // Test dependencies
   "org.scalatest" %% "scalatest" % "3.0.1" % "test",
-  "com.typesafe.akka" %% "akka-http-testkit" % "10.0.0",
-  "org.mockito" % "mockito-core" % "2.3.4",
+  "com.typesafe.akka" %% "akka-http-testkit" % "10.0.0" % "test",
+  "org.mockito" % "mockito-core" % "2.3.4" % "test",
 
   // Integration test dependencies
-  "org.mock-server" % "mockserver-client" % "3.2"
+  "com.github.tomakehurst" % "wiremock" % "2.4.1" % "test"
 )
 
 // Package
