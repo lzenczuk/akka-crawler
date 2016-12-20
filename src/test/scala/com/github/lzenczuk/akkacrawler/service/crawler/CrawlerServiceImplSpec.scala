@@ -2,7 +2,7 @@ package com.github.lzenczuk.akkacrawler.service.crawler
 
 import akka.actor.{ActorRef, ActorSystem}
 import akka.testkit.{TestKit, TestProbe}
-import com.github.lzenczuk.akkacrawler.actors.httpcrawler.{CrawlerActor, CrawlerActorFactory}
+import com.github.lzenczuk.akkacrawler.actors.crawler.{CrawlerActor, CrawlerActorFactory}
 import com.github.lzenczuk.akkacrawler.models.httpcrawler.CrawlerRequest
 import com.github.lzenczuk.akkacrawler.util.IdGenerator
 import org.mockito.Mockito._

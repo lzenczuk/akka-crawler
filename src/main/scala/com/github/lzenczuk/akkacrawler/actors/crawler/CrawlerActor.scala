@@ -1,8 +1,8 @@
-package com.github.lzenczuk.akkacrawler.actors.httpcrawler
+package com.github.lzenczuk.akkacrawler.actors.crawler
 
 import akka.actor.{ActorLogging, ActorRef, Props}
 import akka.persistence.{PersistentActor, RecoveryCompleted}
-import com.github.lzenczuk.akkacrawler.actors.httpcrawler.CrawlerActor._
+import com.github.lzenczuk.akkacrawler.actors.crawler.CrawlerActor._
 import com.github.lzenczuk.akkacrawler.models.httpcrawler.{CrawlerRequest, CrawlerResponse, CrawlerStep}
 
 /**

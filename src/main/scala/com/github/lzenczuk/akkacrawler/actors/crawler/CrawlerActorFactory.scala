@@ -1,4 +1,4 @@
-package com.github.lzenczuk.akkacrawler.actors.httpcrawler
+package com.github.lzenczuk.akkacrawler.actors.crawler
 
 import akka.actor.{ActorRef, ActorSystem}
 

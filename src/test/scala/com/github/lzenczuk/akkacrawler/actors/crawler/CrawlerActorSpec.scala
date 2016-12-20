@@ -1,11 +1,10 @@
-package com.github.lzenczuk.akkacrawler.actors.httpcrawler
+package com.github.lzenczuk.akkacrawler.actors.crawler
 
 import java.util.UUID
 
 import akka.actor.{ActorSystem, PoisonPill}
-import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
-import akka.util.Timeout
-import com.github.lzenczuk.akkacrawler.actors.httpcrawler.CrawlerActor.{Status}
+import akka.testkit.{ImplicitSender, TestKit}
+import com.github.lzenczuk.akkacrawler.actors.crawler.CrawlerActor.Status
 import com.github.lzenczuk.akkacrawler.models.httpclient.{CHttpRequest, CHttpSuccessResponse}
 import com.github.lzenczuk.akkacrawler.models.httpcrawler.{CrawlerRequest, CrawlerResponse, CrawlerStep}
 import com.typesafe.config.ConfigFactory
