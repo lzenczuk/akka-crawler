@@ -1,6 +1,6 @@
 package com.github.lzenczuk.akkacrawler.actors.crawler
 
-import akka.actor.{ActorLogging, ActorRef, Props}
+import akka.actor.{ActorLogging, Props}
 import akka.persistence.{PersistentActor, RecoveryCompleted}
 import com.github.lzenczuk.akkacrawler.actors.crawler.CrawlerActor._
 import com.github.lzenczuk.akkacrawler.models.httpcrawler.{CrawlerRequest, CrawlerResponse, CrawlerStep}
@@ -34,6 +34,7 @@ class CrawlerActor(requestId:String) extends PersistentActor with ActorLogging{
 
   override def receiveRecover: Receive = {
     case cae:CrawlerActorEvent => applyEvent(cae)
+    case RecoveryCompleted => log.debug(s"CrawlerActor $persistenceId recovered.")
     case ev => log.error(s"In receiveRecover receive unknown event: $ev")
   }
 
