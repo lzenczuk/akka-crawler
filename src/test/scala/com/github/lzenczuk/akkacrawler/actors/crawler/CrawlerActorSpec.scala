@@ -6,7 +6,7 @@ import akka.actor.{ActorSystem, PoisonPill}
 import akka.testkit.{ImplicitSender, TestKit}
 import com.github.lzenczuk.akkacrawler.actors.crawler.CrawlerActor.Status
 import com.github.lzenczuk.akkacrawler.models.httpclient.{CHttpRequest, CHttpSuccessResponse}
-import com.github.lzenczuk.akkacrawler.models.httpcrawler.{CrawlerRequest, CrawlerResponse, CrawlerStep}
+import com.github.lzenczuk.akkacrawler.models.crawler.{CrawlerRequest, CrawlerResponse, CrawlerStep}
 import com.typesafe.config.ConfigFactory
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers}

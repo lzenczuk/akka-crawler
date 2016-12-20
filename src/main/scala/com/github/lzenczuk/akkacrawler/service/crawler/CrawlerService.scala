@@ -2,7 +2,7 @@ package com.github.lzenczuk.akkacrawler.service.crawler
 
 import akka.actor.ActorRef
 import com.github.lzenczuk.akkacrawler.actors.crawler.CrawlerActorFactory
-import com.github.lzenczuk.akkacrawler.models.httpcrawler.CrawlerRequest
+import com.github.lzenczuk.akkacrawler.models.crawler.CrawlerRequest
 import com.github.lzenczuk.akkacrawler.util.IdGenerator
 
 /**

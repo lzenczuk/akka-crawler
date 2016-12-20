@@ -1,4 +1,4 @@
-package com.github.lzenczuk.akkacrawler.models.httpcrawler
+package com.github.lzenczuk.akkacrawler.models.crawler
 
 import com.github.lzenczuk.akkacrawler.models.httpclient.{CHttpRequest, CHttpResponse}
 

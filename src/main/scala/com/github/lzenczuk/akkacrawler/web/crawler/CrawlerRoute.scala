@@ -3,7 +3,7 @@ package com.github.lzenczuk.akkacrawler.web.crawler
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server._
-import com.github.lzenczuk.akkacrawler.models.httpcrawler.CrawlerRequest
+import com.github.lzenczuk.akkacrawler.models.crawler.CrawlerRequest
 import com.github.lzenczuk.akkacrawler.service.crawler.CrawlerService
 import spray.json.DefaultJsonProtocol
 
