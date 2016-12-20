@@ -5,7 +5,7 @@ import java.util.UUID
 import akka.actor.{ActorSystem, PoisonPill}
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
 import akka.util.Timeout
-import com.github.lzenczuk.akkacrawler.actors.httpcrawler.CrawlerActor.{Ready, Status}
+import com.github.lzenczuk.akkacrawler.actors.httpcrawler.CrawlerActor.{Status}
 import com.github.lzenczuk.akkacrawler.models.httpclient.{CHttpRequest, CHttpSuccessResponse}
 import com.github.lzenczuk.akkacrawler.models.httpcrawler.{CrawlerRequest, CrawlerResponse, CrawlerStep}
 import com.typesafe.config.ConfigFactory
@@ -25,10 +25,7 @@ class CrawlerActorSpec extends TestKit(ActorSystem("cas-test-as", ConfigFactory.
 
     val randomId: String = UUID.randomUUID().toString
 
-    val managerProbe = TestProbe()
-    val crawlerActor = system.actorOf(CrawlerActor.props(randomId, managerProbe.ref))
-
-    managerProbe.expectMsg(15 seconds, Ready(randomId))
+    val crawlerActor = system.actorOf(CrawlerActor.props(randomId))
 
     crawlerActor ! Status
     expectMsg(15 seconds, None)
@@ -74,7 +71,7 @@ class CrawlerActorSpec extends TestKit(ActorSystem("cas-test-as", ConfigFactory.
 
     crawlerActor ! PoisonPill
 
-    val crawlerActorReloaded = system.actorOf(CrawlerActor.props(randomId, managerProbe.ref))
+    val crawlerActorReloaded = system.actorOf(CrawlerActor.props(randomId))
 
     crawlerActorReloaded ! Status
     expectMsgPF(15 seconds){

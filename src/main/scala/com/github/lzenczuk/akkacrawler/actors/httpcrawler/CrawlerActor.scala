@@ -10,18 +10,17 @@ import com.github.lzenczuk.akkacrawler.models.httpcrawler.{CrawlerRequest, Crawl
   */
 
 object CrawlerActor{
-  def props(requestId:String, manager:ActorRef) = Props(new CrawlerActor(requestId, manager))
+  def props(requestId:String) = Props(new CrawlerActor(requestId))
 
   trait CrawlerActorEvent
   case class Initialized(crawlerRequest: CrawlerRequest) extends CrawlerActorEvent
   case class StepUpdated(crawlerStep: CrawlerStep) extends CrawlerActorEvent
 
   trait CrawlerActorPersistenceEvent
-  case class Ready(requestId:String)
   case object Status
 }
 
-class CrawlerActor(requestId:String, manager:ActorRef) extends PersistentActor with ActorLogging{
+class CrawlerActor(requestId:String) extends PersistentActor with ActorLogging{
 
   var crawlerResponse:Option[CrawlerResponse] = None
 
@@ -35,7 +34,6 @@ class CrawlerActor(requestId:String, manager:ActorRef) extends PersistentActor w
 
   override def receiveRecover: Receive = {
     case cae:CrawlerActorEvent => applyEvent(cae)
-    case RecoveryCompleted => manager ! Ready(persistenceId)
     case ev => log.error(s"In receiveRecover receive unknown event: $ev")
   }
 
