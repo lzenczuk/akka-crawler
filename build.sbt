@@ -27,7 +27,9 @@ libraryDependencies ++= Seq(
 
   "com.typesafe.akka" %% "akka-http-testkit" % "10.0.0" % "test",
 
-  "com.github.tomakehurst" % "wiremock" % "2.4.1" % "test"
+  "com.github.tomakehurst" % "wiremock" % "2.4.1" % "test",
+
+  "com.github.dnvriend" %% "akka-persistence-inmemory" % "1.3.17" % "test"
 )
 
 // Package
