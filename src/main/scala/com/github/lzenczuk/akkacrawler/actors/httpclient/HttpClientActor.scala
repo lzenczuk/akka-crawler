@@ -6,9 +6,10 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.stream.{ActorMaterializer, OverflowStrategy}
+import com.github.lzenczuk.akkacrawler.actors.httpclient.HttpClientActor.BusyWaitingForResponse
 import com.github.lzenczuk.akkacrawler.actors.httpclient.HttpClientActor.fsm.{Data, State}
-import com.github.lzenczuk.akkacrawler.actors.httpclient.HttpClientActor.{BusyWaitingForResponse, HttpActorException}
 import com.github.lzenczuk.akkacrawler.models.httpclient.{CHttpErrorResponse, CHttpRequest, CHttpRequestResponse, CHttpResponse}
+import com.github.lzenczuk.akkacrawler.util.EventBus
 
 import scala.util.{Failure, Success, Try}
 
@@ -17,7 +18,7 @@ import scala.util.{Failure, Success, Try}
   */
 
 object HttpClientActor {
-  def props(id:String) = Props(new HttpClientActor(id))
+  def props(id:String, eventBus: EventBus) = Props(new HttpClientActor(id, eventBus))
 
   object fsm {
     sealed trait State
@@ -32,9 +33,17 @@ object HttpClientActor {
   case class HttpActorException(message:String) extends RuntimeException(message)
   case class BusyWaitingForResponse(request: CHttpRequest)
 
+  trait HttpClientCommand
+  case class Employ(requestId:String) extends HttpClientCommand
+  case class Release(requestId:String) extends HttpClientCommand
+
+  trait HttpClientEvent
+  case class Available(id:String) extends HttpClientEvent
+  case class Hired(id:String, requestId:String) extends HttpClientEvent
+  case class Terminated(id:String) extends HttpClientEvent
 }
 
-class HttpClientActor(id:String) extends  FSM[State, Data] {
+class HttpClientActor(id:String, eventBus: EventBus) extends  FSM[State, Data] {
   import HttpClientActor.fsm._
 
   case object HttpClientFlowComplete
@@ -86,6 +95,7 @@ class HttpClientActor(id:String) extends  FSM[State, Data] {
   initialize()
 
   log.info(s"HttpClientActor with id $id created.")
+  eventBus.publish(HttpClientActor.Available, self)
 
   private def createHttpClientFlow():ActorRef = {
 

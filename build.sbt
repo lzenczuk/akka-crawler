@@ -13,6 +13,7 @@ mainClass in Compile := Some("com.github.lzenczuk.akkacrawler.Application")
 libraryDependencies ++= Seq(
   "com.typesafe.akka"         %%  "akka-actor"                          % "2.4.14",
   "com.typesafe.akka"         %%  "akka-cluster"                        % "2.4.14",
+  "com.typesafe.akka"         %%  "akka-cluster-tools"                  % "2.4.14",
   "com.typesafe.akka"         %%  "akka-persistence"                    % "2.4.14",
   "com.typesafe.akka"         %%  "akka-persistence-query-experimental" % "2.4.14",
   "com.typesafe.akka"         %%  "akka-http"                           % "10.0.0",
