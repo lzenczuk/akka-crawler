@@ -1,11 +1,9 @@
 package com.github.lzenczuk.akkacrawler.web.cluster
 
-import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.github.lzenczuk.akkacrawler.actors.cluster.ClusterManagerActor
-import com.github.lzenczuk.akkacrawler.models.cluster.ClusterModels.ClusterManager._
+import com.github.lzenczuk.akkacrawler.service.cluster.ClusterService
 import spray.json.DefaultJsonProtocol
 
 /**
@@ -23,13 +21,13 @@ object ClusterRoute extends SprayJsonSupport with DefaultJsonProtocol {
   implicit val clusterJoinRequestFormat = jsonFormat1(ClusterJoinRequest)
   implicit val clusterJoinResponseFormat = jsonFormat2(ClusterJoinResponse)
 
-  def route(actorSystem: ActorSystem, nodeManager: ActorRef): Route =
+  def route(clusterService: ClusterService): Route =
     pathPrefix("cluster") {
       pathPrefix("join") {
         pathEnd {
           post {
             entity(as[ClusterJoinRequest]) { cjr: ClusterJoinRequest =>
-              nodeManager ! JoinCluster(cjr.cluster.system, cjr.cluster.host, cjr.cluster.port)
+              clusterService.joinCluster(cjr.cluster.system, cjr.cluster.host, cjr.cluster.port)
               complete(ClusterJoinResponse(success = true, s"Joining cluster: $cjr"))
             }
           }
@@ -38,7 +36,7 @@ object ClusterRoute extends SprayJsonSupport with DefaultJsonProtocol {
         pathPrefix("create") {
           pathEnd {
             post {
-              nodeManager ! CreateCluster
+              clusterService.createCluster()
               complete(ClusterJoinResponse(success = true, s"Creating cluster"))
             }
           }
@@ -46,7 +44,7 @@ object ClusterRoute extends SprayJsonSupport with DefaultJsonProtocol {
         pathPrefix("leave") {
           pathEnd {
             post {
-              nodeManager ! LeaveCluster
+              clusterService.leaveCluster()
               complete(ClusterJoinResponse(success = true, s"Leaving cluster"))
             }
           }
