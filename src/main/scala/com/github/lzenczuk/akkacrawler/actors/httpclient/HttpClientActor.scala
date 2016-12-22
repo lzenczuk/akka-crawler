@@ -17,7 +17,7 @@ import scala.util.{Failure, Success, Try}
   */
 
 object HttpClientActor {
-  def props = Props(new HttpClientActor)
+  def props(id:String) = Props(new HttpClientActor(id))
 
   object fsm {
     sealed trait State
@@ -34,7 +34,7 @@ object HttpClientActor {
 
 }
 
-class HttpClientActor extends  FSM[State, Data] {
+class HttpClientActor(id:String) extends  FSM[State, Data] {
   import HttpClientActor.fsm._
 
   case object HttpClientFlowComplete
@@ -84,6 +84,8 @@ class HttpClientActor extends  FSM[State, Data] {
   }
 
   initialize()
+
+  log.info(s"HttpClientActor with id $id created.")
 
   private def createHttpClientFlow():ActorRef = {
 

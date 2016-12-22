@@ -7,8 +7,10 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import com.github.lzenczuk.akkacrawler.service.cluster.ClusterService
 import com.github.lzenczuk.akkacrawler.service.crawler.CrawlerService
+import com.github.lzenczuk.akkacrawler.service.httpclient.HttpClientService
 import com.github.lzenczuk.akkacrawler.web.cluster.ClusterRoute
 import com.github.lzenczuk.akkacrawler.web.crawler.CrawlerRoute
+import com.github.lzenczuk.akkacrawler.web.httpclient.HttpClientRoute
 import com.github.lzenczuk.akkacrawler.web.notification.NotificationsRoute
 import com.google.inject.{AbstractModule, Provides}
 
@@ -25,10 +27,12 @@ object WebModule extends AbstractModule {
                       actorSystem:ActorSystem,
                       @Named("cluster-status") clusterStatusActor:ActorRef,
                       crawlerService: CrawlerService,
-                      clusterService: ClusterService
+                      clusterService: ClusterService,
+                      httpClientService: HttpClientService
                     ):Route = {
     ClusterRoute.route(clusterService) ~
     NotificationsRoute.route(actorSystem, clusterStatusActor) ~
-    CrawlerRoute.route(crawlerService)
+    CrawlerRoute.route(crawlerService) ~
+    HttpClientRoute.route(httpClientService)
   }
 }

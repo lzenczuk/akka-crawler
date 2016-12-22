@@ -6,6 +6,7 @@ import akka.actor.ActorSystem
 import com.github.lzenczuk.akkacrawler.actors.crawler.{CrawlerActorFactory, CrawlerActorFactoryImpl}
 import com.github.lzenczuk.akkacrawler.service.crawler.{CrawlerService, CrawlerServiceImpl}
 import com.github.lzenczuk.akkacrawler.util.IdGenerator
+import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides}
 
 /**
@@ -19,5 +20,5 @@ object CrawlerModule extends AbstractModule{
   def providesCrawlerActorFactory(actorSystem: ActorSystem):CrawlerActorFactory = new CrawlerActorFactoryImpl(actorSystem)
 
   @Provides @Singleton
-  def providesCrawlerService(crawlerActorFactory: CrawlerActorFactory, idGenerator: IdGenerator):CrawlerService = new CrawlerServiceImpl(crawlerActorFactory, idGenerator)
+  def providesCrawlerService(crawlerActorFactory: CrawlerActorFactory, @Named("crawlers-id-generator") idGenerator: IdGenerator):CrawlerService = new CrawlerServiceImpl(crawlerActorFactory, idGenerator)
 }

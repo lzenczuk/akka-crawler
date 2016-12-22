@@ -2,7 +2,8 @@ package com.github.lzenczuk.akkacrawler.config.util
 
 import javax.inject.Singleton
 
-import com.github.lzenczuk.akkacrawler.util.{IdGenerator, JavaUUIDBasedIdGenerator}
+import com.github.lzenczuk.akkacrawler.util.{IdGenerator, JavaUUIDBasedIdGenerator, NanoTimeIncrementCounterIdGenerator}
+import com.google.inject.name.Named
 import com.google.inject.{AbstractModule, Provides}
 
 /**
@@ -11,6 +12,9 @@ import com.google.inject.{AbstractModule, Provides}
 object UtilModule extends AbstractModule{
   override def configure(): Unit = {}
 
-  @Provides @Singleton
-  def providesIdGenerator():IdGenerator = new JavaUUIDBasedIdGenerator
+  @Provides @Singleton @Named("crawlers-id-generator")
+  def providesCrawlersIdGenerator():IdGenerator = new JavaUUIDBasedIdGenerator
+
+  @Provides @Singleton @Named("http-clients-id-generator")
+  def providesHttpClientsIdGenerator():IdGenerator = new NanoTimeIncrementCounterIdGenerator
 }
